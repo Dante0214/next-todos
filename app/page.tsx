@@ -8,10 +8,20 @@ import {
   eachDayOfInterval,
   isSameDay,
   isToday,
+  getDay,
+  subMonths,
+  addMonths,
 } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useRouter } from "next/navigation";
-import { Plus, LogOut, Check } from "lucide-react";
+import {
+  Plus,
+  LogOut,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function TodoApp() {
@@ -84,17 +94,46 @@ export default function TodoApp() {
   const getDaysInMonth = () => {
     const start = startOfMonth(selectedDate);
     const end = endOfMonth(selectedDate);
-    return eachDayOfInterval({ start, end });
+    const days = eachDayOfInterval({ start, end });
+
+    const firstDayOfWeek = getDay(start);
+    const blanks = Array(firstDayOfWeek).fill(null); // 앞쪽 빈칸
+    return [...blanks, ...days];
   };
+  const handlePrevMonth = () => setSelectedDate(subMonths(selectedDate, 1));
+  const handleNextMonth = () => setSelectedDate(addMonths(selectedDate, 1));
+  const handleToday = () => setSelectedDate(new Date());
+
   const days = getDaysInMonth();
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-4xl mx-auto">
         {/* 헤더 */}
         <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
-          <h1 className="text-2xl font-bold text-gray-800">
-            {format(selectedDate, "yyyy년 M월", { locale: ko })}
-          </h1>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handlePrevMonth}
+              className="p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {format(selectedDate, "yyyy년 M월", { locale: ko })}
+            </h1>
+            <button
+              onClick={handleNextMonth}
+              className="p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              <ChevronRight size={20} />
+            </button>
+            <button
+              onClick={handleToday}
+              className="ml-3 flex items-center gap-1 text-blue-600 text-sm font-medium hover:bg-blue-50 px-2 py-1 rounded-lg"
+            >
+              <Calendar size={16} /> 오늘
+            </button>
+          </div>
+
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
@@ -118,20 +157,17 @@ export default function TodoApp() {
           </div>
 
           <div className="grid grid-cols-7 gap-2">
-            {days.map((day) => {
-              const isSelected = isSameDay(day, selectedDate);
-              const isTodayDate = isToday(day);
-
-              return (
+            {days.map((day, i) =>
+              day ? (
                 <button
                   key={day.toString()}
                   onClick={() => setSelectedDate(day)}
                   className={`
                     aspect-square p-2 rounded-lg font-medium transition
                     ${
-                      isSelected
+                      isSameDay(day, selectedDate)
                         ? "bg-blue-600 text-white shadow-lg scale-105"
-                        : isTodayDate
+                        : isToday(day)
                         ? "bg-blue-100 text-blue-700 border-2 border-blue-400"
                         : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                     }
@@ -139,8 +175,10 @@ export default function TodoApp() {
                 >
                   {format(day, "d")}
                 </button>
-              );
-            })}
+              ) : (
+                <div key={`blank-${i}`} />
+              )
+            )}
           </div>
         </div>
 
