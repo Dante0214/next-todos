@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { TodoHeader } from "@/components/TodoHeader";
 import { Calendar } from "@/components/Calendar";
 import { TodoList } from "@/components/TodoList";
+import { AddButton } from "@/components/AddButton";
 
 export default function TodoApp() {
   const [user, setUser] = useState<any>(null);
@@ -194,7 +195,6 @@ export default function TodoApp() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-4xl mx-auto">
-        {/* 헤더 */}
         <TodoHeader
           selectedDate={selectedDate}
           onPrevMonth={handlePrevMonth}
@@ -209,8 +209,6 @@ export default function TodoApp() {
           onSelectDate={setSelectedDate}
           truncateTitle={truncateTitle}
         />
-
-        {/* 투두 리스트 */}
         <TodoList
           selectedDate={selectedDate}
           todos={todos}
@@ -220,12 +218,7 @@ export default function TodoApp() {
         />
 
         {/* 추가 버튼 */}
-        <button
-          onClick={() => setShowModal(true)}
-          className="fixed bottom-8 left-8 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition hover:scale-110"
-        >
-          <Plus size={24} />
-        </button>
+        <AddButton onClick={() => setShowModal(true)} />
 
         {/* 투두 추가 모달 */}
         {showModal && (
