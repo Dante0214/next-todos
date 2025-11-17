@@ -6,8 +6,6 @@ import {
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
-  isSameDay,
-  isToday,
   getDay,
   subMonths,
   addMonths,
@@ -18,6 +16,7 @@ import { Plus, Check, Trash, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TodoHeader } from "@/components/TodoHeader";
 import { Calendar } from "@/components/Calendar";
+import { TodoList } from "@/components/TodoList";
 
 export default function TodoApp() {
   const [user, setUser] = useState<any>(null);
@@ -212,65 +211,13 @@ export default function TodoApp() {
         />
 
         {/* 투두 리스트 */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">
-            {format(selectedDate, "M월 d일", { locale: ko })}의 할 일
-          </h2>
-
-          {todos.length === 0 ? (
-            <p className="text-gray-400 text-center py-8">할 일이 없습니다</p>
-          ) : (
-            <div className="space-y-2">
-              {todos.map((todo) => (
-                <div
-                  key={todo.id}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition"
-                >
-                  <button
-                    onClick={() => toggleTodo(todo.id, todo.completed)}
-                    className={`
-                      w-6 h-6 rounded border-2 flex items-center justify-center transition cursor-pointer
-                      ${
-                        todo.completed
-                          ? "bg-blue-600 border-blue-600"
-                          : "border-gray-300 hover:border-blue-400"
-                      }
-                    `}
-                  >
-                    {todo.completed && (
-                      <Check size={16} className="text-white" />
-                    )}
-                  </button>
-                  <span
-                    className={`
-                      flex-1 text-lg
-                      ${
-                        todo.completed
-                          ? "line-through text-gray-400"
-                          : "text-gray-700"
-                      }
-                    `}
-                  >
-                    {todo.title}
-                  </span>
-                  <button
-                    className="text-blue-500 hover:text-blue-600 transition cursor-pointer"
-                    onClick={() => handleEditTodo(todo)}
-                  >
-                    <Pencil size={16} />
-                  </button>
-
-                  <button
-                    className="text-red-500 hover:text-red-600 transition cursor-pointer"
-                    onClick={() => handleDeleteTodo(todo.id)}
-                  >
-                    <Trash size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <TodoList
+          selectedDate={selectedDate}
+          todos={todos}
+          onToggle={toggleTodo}
+          onEdit={handleEditTodo}
+          onDelete={handleDeleteTodo}
+        />
 
         {/* 추가 버튼 */}
         <button
