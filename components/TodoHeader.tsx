@@ -22,7 +22,7 @@ export function TodoHeader({
       <div className="flex items-center gap-3">
         <button
           onClick={onPrevMonth}
-          className="p-2 rounded-full hover:bg-gray-100 transition"
+          className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer"
         >
           <ChevronLeft size={20} />
         </button>
@@ -31,13 +31,13 @@ export function TodoHeader({
         </h1>
         <button
           onClick={onNextMonth}
-          className="p-2 rounded-full hover:bg-gray-100 transition"
+          className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer"
         >
           <ChevronRight size={20} />
         </button>
         <button
           onClick={onToday}
-          className="ml-3 flex items-center gap-1 text-blue-600 text-sm font-medium hover:bg-blue-50 px-2 py-1 rounded-lg"
+          className="ml-3 flex items-center gap-1 text-blue-600 text-sm font-medium hover:bg-blue-50 px-2 py-1 rounded-lg cursor-pointer"
         >
           <Calendar size={16} /> 오늘
         </button>
