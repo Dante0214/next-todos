@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Calendar,
   Trash,
+  Pencil,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -33,6 +34,9 @@ export default function TodoApp() {
   const [showModal, setShowModal] = useState(false);
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [loading, setLoading] = useState(true);
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTodoTitle, setEditTodoTitle] = useState("");
   const router = useRouter();
   const monthKey = format(selectedDate, "yyyy-MM");
 
@@ -86,6 +90,29 @@ export default function TodoApp() {
       setShowModal(false);
       fetchTodos();
       fetchMonthlyTodos();
+    }
+  };
+  const handleEditTodo = (todo: Todo) => {
+    setEditingTodo(todo);
+    setEditTodoTitle(todo.title);
+    setShowEditModal(true);
+  };
+  const updateTodo = async () => {
+    if (!editTodoTitle.trim() || !editingTodo) return;
+
+    const { error } = await supabase
+      .from("todos")
+      .update({ title: editTodoTitle })
+      .eq("id", editingTodo.id);
+
+    if (!error) {
+      setEditTodoTitle("");
+      setEditingTodo(null);
+      setShowEditModal(false);
+      fetchTodos();
+      fetchMonthlyTodos();
+    } else {
+      alert("수정에 실패했습니다.");
     }
   };
   const toggleTodo = async (id: string, completed: boolean) => {
@@ -303,6 +330,12 @@ export default function TodoApp() {
                   >
                     {todo.title}
                   </span>
+                  <button
+                    className="text-blue-500 hover:text-blue-600 transition cursor-pointer"
+                    onClick={() => handleEditTodo(todo)}
+                  >
+                    <Pencil size={16} />
+                  </button>
 
                   <button
                     className="text-red-500 hover:text-red-600 transition cursor-pointer"
@@ -353,6 +386,43 @@ export default function TodoApp() {
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                 >
                   추가
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* 투두 수정 모달 */}
+        {showEditModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl p-6 w-full max-w-md">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">
+                할 일 수정
+              </h3>
+              <input
+                type="text"
+                value={editTodoTitle}
+                onChange={(e) => setEditTodoTitle(e.target.value)}
+                placeholder="할 일을 입력하세요"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onKeyPress={(e) => e.key === "Enter" && updateTodo()}
+                autoFocus
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingTodo(null);
+                    setEditTodoTitle("");
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={updateTodo}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                >
+                  수정
                 </button>
               </div>
             </div>
