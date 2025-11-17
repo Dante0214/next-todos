@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Next.js + Supabase 투두 앱
 
-## Getting Started
+### 기능
 
-First, run the development server:
+#### 계정 관련
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [x] 로그인
+  - [x] 로그인 시 스피너
+- [x] 회원가입
+  - [x] 이메일 회원가입
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 투두 기능
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [x] 달력표시
+  - [x] 달 이동 가능
+  - [x] 오늘 지정 기능
+  - [x] 오늘 일정 간략히 표현
+- [] 일정 추가
+  - [x] 일정 완료시 체크박스 누르면 중간줄
+  - [] 일정 수정 기능
+  - [] 일정 삭제 기능
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### UI/UX
 
-## Learn More
+- [] 다양한 기기에 적용 가능하게 반응형
 
-To learn more about Next.js, take a look at the following resources:
+#### 수파베잇,
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [x] 테이블 생성
+- [x] rls 설정
+- [x] 로그인 인증 설정
