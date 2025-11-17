@@ -69,22 +69,22 @@ export default function LoginPage() {
               required
             />
           </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 mt-4 cursor-pointer flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-              처리중...
-            </>
-          ) : isSignUp ? (
-            "회원가입"
-          ) : (
-            "로그인"
-          )}
-        </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 mt-4 cursor-pointer flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                처리중...
+              </>
+            ) : isSignUp ? (
+              "회원가입"
+            ) : (
+              "로그인"
+            )}
+          </button>
         </form>
         <button
           onClick={() => setIsSignUp(!isSignUp)}

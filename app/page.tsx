@@ -28,9 +28,11 @@ export default function TodoApp() {
   const [user, setUser] = useState<any>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [monthlyTodos, setMonthlyTodos] = useState<Record<string, Todo[]>>({});
   const [showModal, setShowModal] = useState(false);
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const router = useRouter();
+  const monthKey = format(selectedDate, "yyyy-MM");
 
   useEffect(() => {
     checkUser();
@@ -40,6 +42,16 @@ export default function TodoApp() {
       fetchTodos();
     }
   }, [user, selectedDate]);
+  useEffect(() => {
+    if (user) {
+      fetchMonthlyTodos();
+    }
+  }, [user, monthKey]);
+
+  const truncateTitle = (title: string) => {
+    const maxLen = 8;
+    return title.length > maxLen ? `${title.slice(0, maxLen)}...` : title;
+  };
 
   const checkUser = async () => {
     const {
@@ -53,15 +65,36 @@ export default function TodoApp() {
     }
   };
   const fetchTodos = async () => {
+    if (!user) return;
     const dateStr = format(selectedDate, "yyyy-MM-dd");
     const { data, error } = await supabase
       .from("todos")
       .select("*")
+      .eq("user_id", user.id)
       .eq("date", dateStr)
       .order("created_at", { ascending: true });
 
     if (!error && data) {
       setTodos(data);
+    }
+  };
+  const fetchMonthlyTodos = async (referenceDate = selectedDate) => {
+    if (!user) return;
+    const start = startOfMonth(referenceDate);
+    const end = endOfMonth(referenceDate);
+    const { data, error } = await supabase
+      .from("todos")
+      .select("*")
+      .eq("user_id", user.id)
+      .gte("date", format(start, "yyyy-MM-dd"))
+      .lte("date", format(end, "yyyy-MM-dd"))
+      .order("date", { ascending: true });
+    if (!error && data) {
+      const grouped = data.reduce<Record<string, Todo[]>>((acc, todo) => {
+        acc[todo.date] = acc[todo.date] ? [...acc[todo.date], todo] : [todo];
+        return acc;
+      }, {});
+      setMonthlyTodos(grouped);
     }
   };
   const addTodo = async () => {
@@ -75,6 +108,7 @@ export default function TodoApp() {
       setNewTodoTitle("");
       setShowModal(false);
       fetchTodos();
+      fetchMonthlyTodos();
     }
   };
   const toggleTodo = async (id: string, completed: boolean) => {
@@ -84,6 +118,7 @@ export default function TodoApp() {
       .eq("id", id);
     if (!error) {
       fetchTodos();
+      fetchMonthlyTodos();
     }
   };
 
@@ -136,7 +171,7 @@ export default function TodoApp() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
           >
             <LogOut size={20} />
             로그아웃
@@ -163,7 +198,7 @@ export default function TodoApp() {
                   key={day.toString()}
                   onClick={() => setSelectedDate(day)}
                   className={`
-                    aspect-square p-2 rounded-lg font-medium transition
+                    aspect-square p-2 rounded-lg font-medium transition text-left flex flex-col items-start gap-1 overflow-hidden
                     ${
                       isSameDay(day, selectedDate)
                         ? "bg-blue-600 text-white shadow-lg scale-105"
@@ -173,7 +208,19 @@ export default function TodoApp() {
                     }
                   `}
                 >
-                  {format(day, "d")}
+                  <span className="text-base">{format(day, "d")}</span>
+                  <div className="flex flex-col gap-1 w-full">
+                    {(monthlyTodos[format(day, "yyyy-MM-dd")] || [])
+                      .slice(0, 2)
+                      .map((todo) => (
+                        <span
+                          key={todo.id}
+                          className="text-xs font-normal truncate"
+                        >
+                          {truncateTitle(todo.title)}
+                        </span>
+                      ))}
+                  </div>
                 </button>
               ) : (
                 <div key={`blank-${i}`} />
@@ -243,7 +290,8 @@ export default function TodoApp() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl p-6 w-full max-w-md">
               <h3 className="text-xl font-bold mb-4 text-gray-800">
-                할 일 추가
+                {format(selectedDate, "M월 d일", { locale: ko })}
+                <br /> 할 일 추가
               </h3>
               <input
                 type="text"
