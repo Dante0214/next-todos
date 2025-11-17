@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
+  Trash,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -31,39 +32,15 @@ export default function TodoApp() {
   const [monthlyTodos, setMonthlyTodos] = useState<Record<string, Todo[]>>({});
   const [showModal, setShowModal] = useState(false);
   const [newTodoTitle, setNewTodoTitle] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const monthKey = format(selectedDate, "yyyy-MM");
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-  useEffect(() => {
-    if (user) {
-      fetchTodos();
-    }
-  }, [user, selectedDate]);
-  useEffect(() => {
-    if (user) {
-      fetchMonthlyTodos();
-    }
-  }, [user, monthKey]);
 
   const truncateTitle = (title: string) => {
     const maxLen = 8;
     return title.length > maxLen ? `${title.slice(0, maxLen)}...` : title;
   };
 
-  const checkUser = async () => {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    if (error || !user) {
-      router.push("/login");
-    } else {
-      setUser(user);
-    }
-  };
   const fetchTodos = async () => {
     if (!user) return;
     const dateStr = format(selectedDate, "yyyy-MM-dd");
@@ -121,7 +98,22 @@ export default function TodoApp() {
       fetchMonthlyTodos();
     }
   };
+  const handleDeleteTodo = async (id: string) => {
+    if (!window.confirm("일정을 삭제하시겠습니까?")) {
+      return;
+    }
 
+    const { error } = await supabase.from("todos").delete().eq("id", id);
+
+    if (error) {
+      console.error("삭제 중 오류가 발생했습니다:", error);
+      alert("삭제에 실패했습니다.");
+      return;
+    }
+
+    fetchTodos();
+    fetchMonthlyTodos();
+  };
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/login");
@@ -139,6 +131,46 @@ export default function TodoApp() {
   const handleNextMonth = () => setSelectedDate(addMonths(selectedDate, 1));
   const handleToday = () => setSelectedDate(new Date());
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        router.push("/login");
+      } else {
+        setUser(user);
+      }
+      setLoading(false);
+    };
+
+    checkUser();
+  }, []);
+  useEffect(() => {
+    if (user) {
+      fetchTodos();
+    }
+  }, [user, selectedDate]);
+
+  useEffect(() => {
+    if (user) {
+      fetchMonthlyTodos();
+    }
+  }, [user, monthKey]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-xl text-gray-600">로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
   const days = getDaysInMonth();
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -271,6 +303,13 @@ export default function TodoApp() {
                   >
                     {todo.title}
                   </span>
+
+                  <button
+                    className="text-red-500 hover:text-red-600 transition cursor-pointer"
+                    onClick={() => handleDeleteTodo(todo.id)}
+                  >
+                    <Trash size={16} />
+                  </button>
                 </div>
               ))}
             </div>
