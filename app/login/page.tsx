@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const router = useRouter();
 
-  const handdleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -41,13 +41,14 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 ">
           {isSignUp ? "회원가입" : "로그인"}
         </h1>
-        <form onSubmit={handdleAuth}>
+        <form onSubmit={handleAuth}>
           <div>
             <label>이메일</label>
             <input
@@ -68,13 +69,22 @@ export default function LoginPage() {
               required
             />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 mt-4 cursor-pointer"
-          >
-            {loading ? "처리중..." : isSignUp ? "회원가입" : "로그인"}
-          </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 mt-4 cursor-pointer flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+              처리중...
+            </>
+          ) : isSignUp ? (
+            "회원가입"
+          ) : (
+            "로그인"
+          )}
+        </button>
         </form>
         <button
           onClick={() => setIsSignUp(!isSignUp)}
