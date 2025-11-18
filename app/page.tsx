@@ -197,8 +197,8 @@ export default function TodoApp() {
   }
   const days = getDaysInMonth();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-4">
+      <div className="max-w-4xl mx-auto pb-20 sm:pb-4">
         <TodoHeader
           selectedDate={selectedDate}
           onPrevMonth={handlePrevMonth}

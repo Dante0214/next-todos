@@ -19,15 +19,17 @@ export function TodoList({
   onDelete,
 }: TodoListProps) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">
+    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">
         {format(selectedDate, "M월 d일", { locale: ko })}의 할 일
       </h2>
 
       {todos.length === 0 ? (
-        <p className="text-gray-400 text-center py-8">할 일이 없습니다</p>
+        <p className="text-gray-400 text-center py-6 sm:py-8 text-sm sm:text-base">
+          할 일이 없습니다
+        </p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           {todos.map((todo) => (
             <TodoItem
               key={todo.id}

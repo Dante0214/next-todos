@@ -16,19 +16,19 @@ export function Calendar({
   truncateTitle,
 }: CalendarProps) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-      <div className="grid grid-cols-7 gap-2 mb-4">
+    <div className="bg-white rounded-xl shadow-lg p-3 mb-4 sm:p-6 sm:mb-6">
+      <div className="grid grid-cols-7 sm:gap-2 sm:mb-4 gap-1 mb-2">
         {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
           <div
             key={day}
-            className="text-center font-semibold text-gray-600 py-2"
+            className="text-center font-semibold text-gray-600 py-1 sm:py-2 text-xs sm:text-base"
           >
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
         {days.map((day, i) =>
           day ? (
             <button
@@ -45,14 +45,14 @@ export function Calendar({
                             }
                           `}
             >
-              <span className="text-base">{format(day, "d")}</span>
-              <div className="flex flex-col gap-1 w-full">
+              <span className="text-xs sm:text-base">{format(day, "d")}</span>
+              <div className="flex flex-col gap-0.5 sm:gap-1 w-full">
                 {(monthlyTodos[format(day, "yyyy-MM-dd")] || [])
                   .slice(0, 2)
                   .map((todo) => (
                     <span
                       key={todo.id}
-                      className="text-xs font-normal truncate"
+                      className="text-[0.6rem] sm:text-xs font-normal truncate leading-tight"
                     >
                       {truncateTitle(todo.title)}
                     </span>
